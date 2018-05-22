@@ -17,6 +17,7 @@ import h5py
 from keras import __version__ as keras_version
 
 from model import crop
+from model import I_HEIGHT, I_WIDTH
 import cv2
 
 sio = socketio.Server()
@@ -47,7 +48,7 @@ class SimplePIController:
 
 
 controller = SimplePIController(0.1, 0.002)
-set_speed = 12 #9 # 15
+set_speed = 12 #12 #9 # 15
 controller.set_desired(set_speed)
 
 
@@ -67,6 +68,8 @@ def telemetry(sid, data):
         image_array = crop(image_array)
 #        image_array = resize(image_array)
         image_array = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
+        image_array = cv2.resize(image_array, (I_WIDTH, I_HEIGHT), cv2.INTER_AREA)
+        
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1)) #image_array[None, :, :, :]
 
         throttle = controller.update(float(speed))
@@ -98,7 +101,6 @@ def send_control(steering_angle, throttle):
             'throttle': throttle.__str__()
         },
         skip_sid=True)
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Remote Driving')
