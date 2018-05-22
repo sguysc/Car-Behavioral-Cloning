@@ -21,7 +21,7 @@ The goals / steps of this project are the following:
 [image3]: center_2018_05_11_16_19_03_491.jpg "Center Image"
 [image4]: center_2018_05_18_21_39_56_857.jpg "Recovery Image 1"
 [image5]: center_2018_05_18_21_36_24_084.jpg "Recovery Image 2"
-[image6]: center_2018_05_18_10_31_30_468.jpg "Recovery Image 2
+[image6]: center_2018_05_18_10_31_30_468.jpg "Recovery Image 2"
 [image7]: center_2018_05_18_10_21_33_766.jpg "Normal Image"
 [image8]: center_2018_05_18_10_21_33_766_f.jpg "Flipped Image"
 
