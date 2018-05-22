@@ -17,12 +17,13 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: nvidia_network.jpg "DNN"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
+[image2]: loss.png "Loss"
+[image3]: center_2018_05_11_16_19_03_491.jpg "Center Image"
+[image4]: center_2018_05_18_21_39_56_857.jpg "Recovery Image 1"
+[image5]: center_2018_05_18_21_36_24_084.jpg "Recovery Image 2"
+[image6]: center_2018_05_18_10_31_30_468.jpg "Recovery Image 2
+[image7]: center_2018_05_18_10_21_33_766.jpg "Normal Image"
+[image8]: center_2018_05_18_10_21_33_766_f.jpg "Flipped Image"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -85,21 +86,55 @@ For details about how I created the training data, see the next section.
 #### 1. Solution Design Approach
 
 The overall strategy for deriving a model architecture was to use a model found successful in the literature (Nvidia).
-Looking at the end result, this was a good choice.
+Judging by the end result, this was a good choice.
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training 80% and validation set 20%. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
+In order to evaluate how well the model was working, I split my image and steering angle data into a training 80% and validation set 20%. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
 
-To combat the overfitting, I modified the model so that in training mode I got some randomness in the data. I used flipping of the image (and also the recorded steering angle) to allow the training data to be richer. Besides that, I have the dropout layer in the model ofcourse.
+To combat the overfitting, I modified the model so that in training mode I insert some randomness in the data. I used flipping of the image (and also the recorded steering angle) to allow the training data to be richer, changed the brightness and gave the picture some translation. Besides that, I have the dropout layer in the model ofcourse. 
 
-Then I ... 
+![alt text][image2]
 
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track (entering the bridge) to improve the driving behavior in these cases, I went to that place manually and recorded extra data, especially to recover from the edges.
+The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track (entering the bridge for instance). To improve the driving behavior in these cases, I went to those place manually and recorded extra data, especially on how to recover from the edges.
+
+To help these small recordings make a difference, especially when the nominal track had much more data, I added them 10 times each. The information is added since I have some randomness added to each picture later on.
+
+The drive.py was changed a bit too. First, I had to increase the speed setpoint. Since the yaw rate of the car as a function of the steering angle changes as speed increases, I had to set the speed closer to the speed I trained the model with. Second, I wanted all game resolutions to work so I added a resize function to insert to the model the expected image size. Third, I converted the image format to BGR, again because this is what the model expects.
 
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
+The final model architecture (model.py function bc_model()) consisted of a convolution neural network with the following layers and layer sizes ...
+
+[None, 75, 320, 3] #Conv2D
+
+[None, 36, 158, 24] #Conv2D
+
+[None, 16, 77, 36] #Conv2D
+
+[None, 6, 37, 48] #Conv2D
+
+[None, 4, 35, 64] #Conv2D
+
+[None, 2, 33, 64] #Conv2D
+
+[None, 2, 33, 64] #Dropout
+
+[None, None] #flatten
+
+[None, 100] # Dense
+
+[None, 100] # activation
+
+[None, 50] # Dense
+
+[None, 50] # activation
+
+[None, 10] # Dense
+
+[None, 10] # activation
+
+[None, 1] # Dense
 
 Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
 
@@ -107,28 +142,27 @@ Here is a visualization of the architecture (note: visualizing the architecture 
 
 #### 3. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
+To capture good driving behavior, I first recorded two laps on track one going counterclockwise using center lane driving. Here is an example image of center lane driving:
 
-![alt text][image2]
+![alt text][image3]
 
 I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
 
-![alt text][image3]
 ![alt text][image4]
 ![alt text][image5]
-
-Then I repeated this process on track two in order to get more data points.
-
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-
 ![alt text][image6]
+
+Then I repeated this process going clockwise in order to get more data points.
+
+To augment the data sat, I also flipped, translated and changed the brightness of random images (and angles accordingly) thinking that this would make the model not to overtrain on the recorded data and help focus on the road. For example, here is an image that has then been flipped:
+
 ![alt text][image7]
+![alt text][image8]
 
 Etc ....
 
-After the collection process, I had X number of data points. I then preprocessed this data by ...
+After the collection process, I had 25k number of data points. I then preprocessed this data by normlization.
 
+I finally randomly shuffled the data set and put 20% of the data into a validation set. 
 
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was ~10 as evidenced by the plot showed above. There was no improvement in the validation loss, but in the end, the model works :)
