@@ -2,7 +2,7 @@
 """
 Created on Sun May 13 23:38:28 2018
 
-@author: guyx64
+@author: 
 """
 
 # Load pickled data
