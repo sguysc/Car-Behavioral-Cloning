@@ -57,13 +57,11 @@ My model is based on the paper by Nvidia
 
 ![alt text][image1]
 
-it consists of a convolution neural network with 3x3 filter sizes and depths between 24 and 64 (model.py function bc_model() ) 
+it consists of a convolution neural network with 3x3 and 5x5 filters sizes and depths between 24 and 64 (model.py function bc_model() ) 
 
 The model includes RELU layers to introduce nonlinearity, and the data is normalized in the model using a Keras lambda layer. 
 
-There is also an option to initialize the model with previously saved model so we could only add new data to train. But de-
-
-facto, this option was not really used because of the folder structure I used (all pics dumped to the same location).
+There is also an option to initialize the model with previously saved model so we could only add new data to train and initialize with previos weights. But de-facto, this option was not really used because of the folder structure I used (all pics dumped to the same location).
 
 #### 2. Attempts to reduce overfitting in the model
 
@@ -73,11 +71,11 @@ The model was trained and validated on different data sets to ensure that the mo
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, wiht the learning rate of 1e-5 (trial & error).
+The model used an adam optimizer, with the learning rate of 1e-5 (trial & error).
 
 #### 4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving (driving 2 full laps clockwise and 2 full laps counterclockwise). After trying to use the trained model in the simulator, I found out that it did pretty well but could not cross the bridge. So I went back to self driving and got some more training data close and on the bridge. Then I also collected data recovering from the left and right sides of the road in case that happens. After that, the trained model successfully drove a lap around the track. 
+Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving (driving 2 full laps clockwise and 2 full laps counterclockwise). After trying to use the trained model in the simulator, I found out that it did pretty well but could not cross the bridge. So I went back to self driving and got some more training data close and on the bridge. Then I also collected data recovering from the left and right sides of the road in case that happens. After that, the trained model successfully drove a lap around the track. See save.mp4.
 
 For details about how I created the training data, see the next section. 
 
@@ -98,7 +96,7 @@ The final step was to run the simulator to see how well the car was driving arou
 
 To help these small recordings make a difference, especially when the nominal track had much more data, I added them 10 times each. The information is added since I have some randomness added to each picture later on.
 
-The drive.py was changed a bit too. First, I had to increase the speed setpoint. Since the yaw rate of the car as a function of the steering angle changes as speed increases, I had to set the speed closer to the speed I trained the model with. Second, I wanted all game resolutions to work so I added a resize function to insert to the model the expected image size. Third, I converted the image format to BGR, again because this is what the model expects.
+The drive.py was changed a bit too. First, I had to increase the speed setpoint. Since the yaw rate of the car as a function of the steering angle changes as speed increases, I had to set the speed closer to the speed I trained the model with. Second, I wanted all game resolutions to work so I added a resize function to insert into the model the expected image size. Third, I converted the image format to BGR, again because this is what the model expects.
 
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
